@@ -1,0 +1,392 @@
+= Lecture Notes  4ahif - NVS 21/22
+Thomas W. Stütz
+1.0.0, {docdate}: Quarkus, Android Jetpack Compose
+ifndef::imagesdir[:imagesdir: images]
+//:toc-placement!:  // prevents the generation of the doc at this position, so it can be printed afterwards
+:sourcedir: ../src/main/java
+:icons: font
+:sectnums:    // Nummerierung der Überschriften / section numbering
+:toc: left
+
+//Need this blank line after ifdef, don't know why...
+//ifdef::backend-html5[]
+
+// print the toc here (not at the default position)
+//toc::[]
+
+== 2021-09-28
+
+* Quarkus Grundlagen (Foliensätze)
+
+== 2021-09-30 - entfallen
+
+
+== 2021-10-05 - entfallen wegen AHS-Vortrag
+
+== 2021-10-07, Do.
+
+image::request-response.png[]
+
+* REST-Clients
+
+* Testen in Quarkus (@QuarkusTest)
+
+== 2021-10-12, Di.
+
+image:v-modell.png[]
+
+[plantuml,vehicle-cld-1,png]
+----
+@startuml
+left to right direction
+class Customer {
+}
+
+class Vehicle {
+}
+
+Customer "*" -- "*" Vehicle : > entleiht
+(Customer, Vehicle) .. Rental
+
+@enduml
+----
+
+[plantuml,vehicle-cld-2,png]
+----
+@startuml
+left to right direction
+class Customer {
+}
+
+class Vehicle {
+}
+
+class Rental {
+  Vehicle: vehicle
+  Customer: customer
+  LocalDate: dateFrom
+  LocalDate: dateTo
+}
+
+Rental "*" --> "1" Vehicle : < wird entliehen
+Customer "1" <-- "*" Rental : > leiht
+
+@enduml
+----
+
+=== Einteilung Mikroprojekte
+
+* Abazović Edina
+* Ablinger Raphael
+* Aichinger Niklas
+* Baumgartner Lukas
+* Bogdan Sebastijan
+* Handel Christoph
+* Hartl Anna
+* Hautzmayer Sheila
+* Hirsch Nico
+* Keintzel Florian
+* Kerschbaum Philipp
+* König Julia
+* Melcher Tamara
+* Neudorfer Niklas
+* Pavelescu Darius-Cristian
+* Pelzeder Joachim
+* Plakolb Marcel
+* Rathberger Jakob
+* Remplbauer Markus
+* Sugic Oliver
+* Tran Michael
+* Tunc Johannes
+
+
+== 2021-10-14
+
+=== REST Context
+=== REST WebApplication Exception
+=== JSON-B, JSON-P
+
+*  https://javaee.github.io/jsonb-spec/users-guide.html
+
+
+=== REST Parameter
+
+* QueryParam
+* PathParam
+* FormParam
+
+== 2021-10-18 (Einschub)
+
+image::jsonb-formparam.png[]
+
+image::hash.png[]
+
+image::mapping.png[]
+
+image::cors.png[]
+
+=== Rest-Endpoints erstellt
+
+* FormParam
+* POST mit Location-Rückgabe
+
+=== Mit JPA begonnen
+
+== 2021-11-04
+
+image::ide-database-overview.png[]
+
+=== 3 Strategien zur Erstellung der Schlüsselwerte
+** Table
+** IDENTITY
+** Sequence
+
+=== Transactions
+
+=== Verwendung von Test zum Ausprobieren von DB-Zugriffen
+
+Begriffe:
+
+* ORM
+* JDBC
+* JAX-RS
+** resteasy
+* JPA
+** Hibernate
+
+
+== 2021-11-08
+
+=== Mögliche Fragen:
+
+* Welche Möglichkeiten gibt es, ein Quarkus Projekt zu erstellen?
+** Assistent auf quarkus.io
+** Assistent in IDE (zB IntelliJ)
+** Aufruf mit mvn
+
+* Strategien zum Erzeugen von Primärschlüsselwerten?
+** TABLE
+** SEQUENCE
+** IDENTITY
+
+* Wie kann man eine Testklasse für eine beliebige Klasse erstellen?
+** Cursor auf Klassenbezeichnung
+** Rechte Maustaste
+** Create Test
+
+* Was bewirkt die Annotation `@QuarkusTest`?
+
+=== Repositories für JPA
+
+https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design[The Repository pattern, window="_blank"]
+
+image::microsoft-repository-pattern.png[]
+
+=== Startup
+
+* Die Methode init() wird sofort nach Start der Applikation ausgeführt (vglbar mit  main()-Methode)
+* Die init()-Methode kann beliebig benannt werden
+
+[source,java]
+----
+package at.htl.carrental.control;
+
+import at.htl.carrental.entity.Person;
+import io.quarkus.runtime.StartupEvent;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+
+@ApplicationScoped
+public class InitBean {
+
+    @Inject
+    PersonRepository personRepository;
+
+    void init(@Observes StartupEvent event) {
+        Person p = new Person("Susi");
+        personRepository.save(p);
+    }
+
+}
+----
+
+
+
+=== Automatisches Befüllen der Tabelle mit IMPORT.sql
+
+* in Ordner `src/main/resources/` eine Datei `import.sql` erstellen: `src/main/resources/import.sql`
+* INSERTs einfügen
+* beim nächsten Start der App werden die INSERTs ausgeführt
+* https://quarkus.io/guides/hibernate-orm
+
+=== NamedQueries
+
+* 2 Varianten
+** JP-QL
+** Criteria API (verwenden wir NICHT)
+
+.JP-QL (Java Persistence Query Language)
+[source,java]
+----
+@Entity
+@NamedQueries({
+        @NamedQuery(
+                name = "Person.findAll",
+                query = "select p from Person p"
+        )
+})
+public class Person {
+    //...
+}
+----
+
+* JP-QL ist vergleichbar mit SQL
+* jedoch werden i.N. keine SPalten angegeben, da nur ganze Objekte zurückgegeben werden.
+* die Rückgabe von Spalten ist sehr wohl möglich
+* Joins und Aggregationen sind ebenfalls möglich
+* https://www.objectdb.com/java/jpa/query/jpql/structure
+
+
+== 2021-11-09
+
+=== Ausführen einer NamedQuery
+
+[source, java,highlight=3-4]
+----
+@Test
+void getAllPersons() {
+    TypedQuery<Person> query = em
+            .createNamedQuery("Person.findAll",Person.class);
+    List<Person> persons = query.getResultList();
+    assertThat(persons.size()).isEqualTo(8);
+    logger.info(persons);
+}
+----
+
+=== Ausführen einer Query
+
+[source,java,highlight=3-4]
+----
+@Test
+void getAllPersonsWithQuery() {
+    TypedQuery<Person> query = em
+            .createQuery("select p from Person p",Person.class);
+    List<Person> persons = query.getResultList();
+    assertThat(persons.size()).isEqualTo(8);
+    logger.info(persons);
+}
+----
+
+=== Ausführen einer NativeQuery
+
+* Es gibt auch hier
+** NativeQuery
+** NativeNamedQuery
+
+[source,java]
+----
+@Test
+void getAllPersonsWithNativeQuery() {
+    Query query = em
+            .createNativeQuery("select p.id, p.name from person p");
+    List<Object[]> persons = query.getResultList();
+    for (Object[] elem : persons) {
+        System.out.println(elem[0] + " " + elem[1]);
+    }
+    assertThat(persons.size()).isEqualTo(9);
+}
+----
+
+* https://thorben-janssen.com/jpa-native-queries/
+
+=== Mikroprojekte-Themen
+
+
+
+
+
+
+|===
+|Name |Thema
+
+|Abazović Edina
+|Stadtrundfahrten
+
+|Ablinger Raphael
+|Linienbusunternehmen inkl. Fahrplan
+
+|Aichinger Niklas
+|Supermarkkt
+
+|Baumgartner Lukas
+|Teehändler
+
+|Bogdan Sebastijan
+|Friedhofsverwaltung
+
+|Handel Christoph
+|Schuhplattln
+
+|Hartl Anna
+|Gärtnerei
+
+|Hautzmayer Sheila
+|Tanzverein
+
+|Hirsch Nico
+|Rezeptseite
+
+|Keintzel Florian
+|Hotel
+
+|Kerschbaum Philipp
+|Fussballverein
+
+|König Julia
+|Tennisverein
+
+|Melcher Tamara
+|Kletterverein mit Kletterrouten
+
+|Neudorfer Niklas
+|Gebäudeverwaltung (wo sind welche Geräte installiert zB Chromecasts)
+
+|Pavelescu Darius-Cristian
+|Musikdatenbank
+
+|Pelzeder Joachim
+|Personaleinteilung in Produktonsbetrieb mit Schichten (es wird durchgehend produziert)
+
+|Plakolb Marcel
+|Luftfahrtlinie (Wo fliegen die Flugzeuge, Linien)
+
+|Rathberger Jakob
+|Doodle
+
+|Remplbauer Markus
+|Modellagentur
+
+|Sugic Oliver
+|Schwimmverein
+
+|Tran Michael
+|Restaurant (Tischreservierung)
+
+|Tunc Johannes
+|Reisebüro
+|===
+
+
+=== Übung
+
+* Erstellen eines Datenmodell in plantuml (3-5 Entitäten)
+* Publishen zu gh-pages
+* Zusätzlich eine kurze Erklärung für die Anwendung
+* Termin: 11.11.2021
+* Ordner im Root-Folder: asciidocs, backend, frontend
+* Erstellen eines Quarkus-Projekts mit einer Tabelle, persisitert in eine postgre-db und einem Endpoint
+
+
+
