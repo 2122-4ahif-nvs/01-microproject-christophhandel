@@ -24,9 +24,9 @@ endif::backend-html5[]
 
 [plantuml,bsp,png]
 ----
-include::plantuml/Schuhplattln.puml[]
+plantuml::plantuml/Schuhplattln.puml[]
 ----
 
 == Beschreibung
 
-Bei einem Plattler verein gibt es Proben und hoffentlich auch Aufträge selten kann man auch auf Ausflüge mitfahren.
+Bei einem Plattlerverein gibt es Proben und hoffentlich auch Aufträge selten kann man auch auf Ausflüge mitfahren.
