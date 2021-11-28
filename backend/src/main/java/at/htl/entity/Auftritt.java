@@ -1,10 +1,10 @@
-package at.htl.library.entity;
+package at.htl.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-public class Probe {
+public class Auftritt {
 
     //region Fields
     @Id
@@ -13,19 +13,20 @@ public class Probe {
 
     private String ort;
     private int anzahlAnPlattler;
+    private int verdienst;
     private String plattler;
     //endregion
 
     //region Constructor
-    public Probe(Long id, String ort, int anzahlAnPlattler, String plattler) {
+    public Auftritt() {
+    }
+
+    public Auftritt(Long id, String ort, int anzahlAnPlattler, int verdienst, String plattler) {
         this.id = id;
         this.ort = ort;
         this.anzahlAnPlattler = anzahlAnPlattler;
+        this.verdienst = verdienst;
         this.plattler = plattler;
-    }
-
-    public Probe() {
-
     }
     //endregion
 
@@ -44,6 +45,14 @@ public class Probe {
 
     public void setAnzahlAnPlattler(int anzahlAnPlattler) {
         this.anzahlAnPlattler = anzahlAnPlattler;
+    }
+
+    public int getVerdienst() {
+        return verdienst;
+    }
+
+    public void setVerdienst(int verdienst) {
+        this.verdienst = verdienst;
     }
 
     public String getPlattler() {

@@ -1,4 +1,4 @@
-package at.htl.library.entity;
+package at.htl.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;

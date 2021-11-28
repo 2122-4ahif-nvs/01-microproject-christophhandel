@@ -1,33 +1,40 @@
-package at.htl.library.entity;
+package at.htl.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
+@NamedQueries({
+        @NamedQuery(
+                name = "Probe.findAll",
+                query = "select p from Probe p"
+        )}
+)
+
 @Entity
-public class Auftritt {
+public class Probe {
 
     //region Fields
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id", nullable = false)
     private Long id;
 
     private String ort;
     private int anzahlAnPlattler;
-    private int verdienst;
     private String plattler;
     //endregion
 
     //region Constructor
-    public Auftritt() {
-    }
-
-    public Auftritt(Long id, String ort, int anzahlAnPlattler, int verdienst, String plattler) {
-        this.id = id;
+    public Probe(String ort, int anzahlAnPlattler, String plattler) {
         this.ort = ort;
         this.anzahlAnPlattler = anzahlAnPlattler;
-        this.verdienst = verdienst;
         this.plattler = plattler;
     }
+
+    public Probe() {
+
+    }
+
     //endregion
 
     //region Getter and Setter
@@ -45,14 +52,6 @@ public class Auftritt {
 
     public void setAnzahlAnPlattler(int anzahlAnPlattler) {
         this.anzahlAnPlattler = anzahlAnPlattler;
-    }
-
-    public int getVerdienst() {
-        return verdienst;
-    }
-
-    public void setVerdienst(int verdienst) {
-        this.verdienst = verdienst;
     }
 
     public String getPlattler() {
