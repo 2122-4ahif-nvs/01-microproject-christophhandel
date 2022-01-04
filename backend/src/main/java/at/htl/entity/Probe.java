@@ -1,6 +1,8 @@
 package at.htl.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 @NamedQueries({
@@ -19,8 +21,11 @@ public class Probe {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @NotBlank(message="City may not be blank")
     private String ort;
+    @Min(message="Plattler has been very lazy", value=1)
     private int anzahlAnPlattler;
+    @NotBlank(message="Plattler may not be blank")
     private String plattler;
     //endregion
 
