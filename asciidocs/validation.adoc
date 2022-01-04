@@ -1,0 +1,127 @@
+= Inhaltsverzeichnis
+christoph handel
+1.0.0, 2021-11-10: Inhaltsverzeichnis
+ifndef::imagesdir[:imagesdir: images]
+//:toc-placement!:  // prevents the generation of the doc at this position, so it can be printed afterwards
+:sourcedir: ../src/main/java
+:icons: font
+:sectnums:    // Nummerierung der Überschriften / section numbering
+:toc: left
+
+// print the toc here (not at the default position)
+//toc::[]
+
+== 2022-01-04 Validtation
+
+=== Warum benötige ich das? (Einsatzzweck)
+----
+Mit der Validation kann man zum Beispiel ausgeben ob eine Probe gültig ist oder ungültig. Dies wird mitghilfe der Resource Klasse überprüft.
+----
+
+=== Ev. die Alternativen anführen
+----
+Eine mögliche Alternative wäre der Apache Validator.
+----
+
+=== Möglichkeiten der Anwendung
+----
+@Path("/Probe")
+public class ProbeRessource {
+
+    @Inject
+    ProbeRepository probeRepository;
+
+    @Inject
+    Validator validator;
+
+    @GET
+    @Path("findAll")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Probe> getDevices(){
+        return probeRepository.findAll();
+    }
+
+    <1>
+    @Path("/manual-validation")
+    @POST
+    public Result tryMeManualValidation(Probe probe) {
+        Set<ConstraintViolation<Probe>> violations = validator.validate(probe);
+        if (violations.isEmpty()) {
+            return new Result("Lesson is valid! It was validated by manual validation.");
+        } else {
+            return new Result(violations);
+        }
+    }
+
+    @Path("/end-point-method-validation")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Result tryMeEndPointMethodValidation(@Valid Probe probe) {
+        return new Result("Probe is valid! It was validated by end point method validation.");
+    }
+
+    <2>
+    @Path("/service-method-validation")
+    @POST
+    public Result tryMeServiceMethodValidation(Probe probe) {
+        try {
+            ProbeRepository.validateProbe(probe);
+            return new Result("Lesson is valid! It was validated by service method validation.");
+        } catch (ConstraintViolationException e) {
+            return new Result(e.getConstraintViolations());
+        }
+    }
+
+    <3>
+    public static class Result {
+
+        Result(String message) {
+            this.success = true;
+            this.message = message;
+        }
+
+        Result(Set<? extends ConstraintViolation<?>> violations) {
+            this.success = false;
+            this.message = violations.stream()
+                    .map(cv -> cv.getMessage())
+                    .collect(Collectors.joining(", "));
+        }
+
+        private String message;
+        private boolean success;
+
+        public String getMessage() {
+            return message;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+    }
+
+}
+
+<1> Mit dieser Methode wird die Probe manuel validiert, indem überprüft wird ob die Probe leer ist.
+<2> Mithilfe dieser Methode wird überprüft ob die Probe gültig ist, die Überorpüfung der Gültigkeit sollte man in einer externen Methode "validateProbe" programmieren.
+<3> Alle POST Methoden geben ein Result zurück, in einem Result wird immer eine Message und ein boolean Wert gespeichert.
+----
+
+== 2022-01-04 Qute
+
+=== Warum benötige ich das? (Einsatzzweck)
+----
+Mithilfe von qute kann man Websiten erstellen und Daten einfügen.
+----
+
+=== Ev. die Alternativen anführen
+----
+
+----
+
+=== Möglichkeiten der Anwendung
+----
+----
+
+
