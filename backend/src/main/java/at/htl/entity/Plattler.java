@@ -3,7 +3,18 @@ package at.htl.entity;
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Entity
+@NamedQueries({
+        @NamedQuery(
+                name = "Plattler.findByName",
+                query = "select t from  SC_Plattler t where t.name=:PlattlerName"
+        ),
+        @NamedQuery(
+                name = "Plattler.findAll",
+                query = "select t from SC_Plattler t"
+        )
+})
+
+@Entity(name = "SC_Plattler")
 public class Plattler {
 
     //region Fields
@@ -51,4 +62,9 @@ public class Plattler {
         this.id = id;
     }
     //endregion
+
+    @Override
+    public String toString() {
+        return "Plattler hat die Nummer "+ id + ", sein Name ist " + name + " und er/sie ist " + alter+".Jahre alt ";
+    }
 }

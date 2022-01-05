@@ -2,6 +2,9 @@ package at.htl.boundary;
 
 import at.htl.controller.ProbeRepository;
 import at.htl.entity.Probe;
+import io.quarkus.qute.CheckedTemplate;
+import io.quarkus.qute.Template;
+import io.quarkus.qute.TemplateInstance;
 
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
@@ -86,5 +89,4 @@ public class ProbeRessource {
         }
 
     }
-
 }
