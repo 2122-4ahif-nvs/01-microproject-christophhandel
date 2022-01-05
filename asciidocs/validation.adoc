@@ -117,11 +117,72 @@ Mithilfe von qute kann man Websiten erstellen und Daten einfügen.
 
 === Ev. die Alternativen anführen
 ----
-
+Andere mögliche Alternativen wären Apache FreeMarker und Apache Velocity.
 ----
 
 === Möglichkeiten der Anwendung
 ----
+
+@ApplicationScoped
+public class PlattlerRepository {
+
+    @Inject
+    EntityManager em;
+
+    @Transactional
+    public Plattler save(Plattler plattler){
+        return em.merge(plattler);
+    }
+
+    public List<Plattler> getAll(){ <1>
+        return em.createNamedQuery("Plattler.findAll",Plattler.class).getResultList();
+    }
+
+    public Plattler getPlattlerByName(String name){ <2>
+        return em.createNamedQuery("Plattler.findByName",Plattler.class)
+                .setParameter("PlattlerName",name)
+                .getSingleResult();
+    }
+}
+
+<1> Hier gebe ich alle Plattler in einer List aus.
+<2> Mit dieser Methode kann man einen Plattler nach Name suchen.
+
+<3>
+ @CheckedTemplate
+    public static class Templates {
+        public static native TemplateInstance plattler(Plattler plattler);
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance get(@QueryParam("name")String name){
+        return Templates.plattler(plattlerRepository.getPlattlerByName(name));
+    }
+
+
+    @Path("/findAll")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Plattler> findAll(){
+        return plattlerRepository.getAll();
+    }
+<3> Qute Teil um die Plattler auszugeben.
 ----
 
+== 2022-01-05 GRPC
 
+=== Warum benötige ich das? (Einsatzzweck)
+----
+Mithilfe von Grpc können Clients Funktionen auf einem Server ausführen, das geschieht mit dem sogenannte Remote Procedure Call.
+----
+
+=== Ev. die Alternativen anführen
+----
+Ich denke eine mögliche Alternative wären WebSockets.
+----
+
+=== Möglichkeiten der Anwendung
+----
+
+----
