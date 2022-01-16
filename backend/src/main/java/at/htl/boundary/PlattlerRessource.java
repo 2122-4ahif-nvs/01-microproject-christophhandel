@@ -5,6 +5,7 @@ import at.htl.entity.Plattler;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -33,6 +34,7 @@ public class PlattlerRessource {
 
     @Path("/findAll")
     @GET
+    @RolesAllowed("Admin")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Plattler> findAll(){
         return plattlerRepository.getAll();
